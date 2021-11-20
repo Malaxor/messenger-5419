@@ -39,7 +39,7 @@ const Sidebar = (props) => {
 };
 
 const mapStateToProps = ({ conversations }) => {
-  // coversation with the newest message will top the stack
+  // coversation with the newest message will be atop the stack
   return {
     conversations: conversations.sort((a, b) => b.latestMessageTime - a.latestMessageTime)
   }

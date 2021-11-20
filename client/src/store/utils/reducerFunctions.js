@@ -7,7 +7,7 @@ export const addMessageToStore = (state, payload) => {
       otherUser: sender,
       messages: [message],
       latestMessageText: message.text,
-      latestMessageTime: new Date(message.createdAt).getTime()
+      latestMessageTime: new Date(message.createdAt)
     };
     return [newConvo, ...state];
   }
@@ -18,10 +18,9 @@ export const addMessageToStore = (state, payload) => {
         ...convo,
         messages: [...convo.messages, message],
         latestMessageText: message.text,
-        latestMessageTime: new Date(message.createdAt).getTime()
+        latestMessageTime: new Date(message.createdAt)
       };
-    } 
-    else {
+    } else {
       return convo;
     }
   });
@@ -79,7 +78,7 @@ export const addNewConvoToStore = (state, recipientId, message) => {
         id: message.conversationId,
         messages: [...convo.messages, message],
         latestMessageText: message.text,
-        latestMessageTime: new Date(message.createdAt).getTime()
+        latestMessageTime: new Date(message.createdAt)
       };
     } 
     else {
