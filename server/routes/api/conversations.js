@@ -55,16 +55,14 @@ router.get("/", async (req, res, next) => {
       if (convoJSON.user1) {
         convoJSON.otherUser = convoJSON.user1;
         delete convoJSON.user1;
-      } 
-      else if (convoJSON.user2) {
+      } else if (convoJSON.user2) {
         convoJSON.otherUser = convoJSON.user2;
         delete convoJSON.user2;
       }
       // set property for online status of the other user
       if (onlineUsers.includes(convoJSON.otherUser.id)) {
         convoJSON.otherUser.online = true;
-      } 
-      else {
+      } else {
         convoJSON.otherUser.online = false;
       }
       // set properties for notification count and latest message preview
@@ -72,12 +70,11 @@ router.get("/", async (req, res, next) => {
       const { messages } = convoJSON;
       const { text, createdAt } = messages[messages.length - 1];
       convoJSON.latestMessageText = text;
-      convoJSON.latestMessageTime = new Date(createdAt);
+      convoJSON.latestMessageTime = new Date(createdAt).getTime();
       conversations[i] = convoJSON;
     }
     res.json(conversations);
-  } 
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 });
