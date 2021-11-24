@@ -15,23 +15,23 @@ router.get("/", async (req, res, next) => {
       where: {
         [Op.or]: {
           user1Id: userId,
-          user2Id: userId,
-        },
+          user2Id: userId
+        }
       },
       attributes: ["id"],
-      order: [[Message, "createdAt", "DESC"]],
+      order: [[ Message, "createdAt", "ASC" ]],
       include: [
-        { model: Message, order: ["createdAt", "DESC"] },
+        { model: Message },
         {
           model: User,
           as: "user1",
           where: {
             id: {
               [Op.not]: userId,
-            },
+            }
           },
           attributes: ["id", "username", "photoUrl"],
-          required: false,
+          required: false
         },
         {
           model: User,
@@ -39,12 +39,12 @@ router.get("/", async (req, res, next) => {
           where: {
             id: {
               [Op.not]: userId,
-            },
+            }
           },
           attributes: ["id", "username", "photoUrl"],
-          required: false,
-        },
-      ],
+          required: false
+        }
+      ]
     });
 
     for (let i = 0; i < conversations.length; i++) {
@@ -59,19 +59,20 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser = convoJSON.user2;
         delete convoJSON.user2;
       }
-
       // set property for online status of the other user
       if (onlineUsers.includes(convoJSON.otherUser.id)) {
         convoJSON.otherUser.online = true;
       } else {
         convoJSON.otherUser.online = false;
       }
-
       // set properties for notification count and latest message preview
-      convoJSON.latestMessageText = convoJSON.messages[0].text;
+      // will use the latest message time to order the conversations chronologically (latest atop of the stack)
+      const { messages } = convoJSON;
+      const { text, createdAt } = messages[messages.length - 1];
+      convoJSON.latestMessageText = text;
+      convoJSON.latestMessageTime = new Date(createdAt).getTime();
       conversations[i] = convoJSON;
     }
-
     res.json(conversations);
   } catch (error) {
     next(error);

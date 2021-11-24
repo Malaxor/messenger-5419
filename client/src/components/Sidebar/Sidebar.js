@@ -38,10 +38,11 @@ const Sidebar = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ conversations }) => {
+  // coversation with the newest message will be atop the stack
   return {
-    conversations: state.conversations
-  };
-};
+    conversations: conversations.sort((a, b) => b.latestMessageTime - a.latestMessageTime)
+  }
+}
 
 export default connect(mapStateToProps)(Sidebar);

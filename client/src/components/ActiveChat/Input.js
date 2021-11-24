@@ -26,16 +26,16 @@ const Input = (props) => {
     setText(event.target.value);
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
     // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
     const reqBody = {
-      text: event.target.text.value,
+      text,
       recipientId: otherUser.id,
       conversationId,
       sender: conversationId ? null : user
     };
-    await postMessage(reqBody);
+    postMessage(reqBody);
     setText("");
   };
 
@@ -54,13 +54,4 @@ const Input = (props) => {
     </form>
   );
 };
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    postMessage: (message) => {
-      dispatch(postMessage(message));
-    },
-  };
-};
-
-export default connect(null, mapDispatchToProps)(Input);
+export default connect(null, { postMessage })(Input);
