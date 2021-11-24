@@ -42,5 +42,26 @@ router.post("/", async (req, res, next) => {
     next(error);
   }
 });
+router.patch('/', async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    const { conversationId, messageId, recipientReadStatus } = req.body;
+    const conversation = await Conversation.findOne({ 
+      where: { 
+        id: conversationId,
+      },
+      include: [{ model: Message }]
+    });
 
+    const message = conversation.messages.find(message => message.id === messageId);
+    message.update({ recipientReadStatus });
+    await message.save();
+    
+    res.json(conversation);
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = router;
