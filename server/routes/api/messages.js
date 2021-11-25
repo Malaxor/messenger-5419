@@ -18,7 +18,7 @@ router.post("/", async (req, res, next) => {
     }
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist
     let conversation = await Conversation.findConversation(
-      6,
+      senderId,
       recipientId
     );
 
@@ -42,15 +42,17 @@ router.post("/", async (req, res, next) => {
     next(error);
   }
 });
+
+// update message status
 router.patch('/', async (req, res, next) => {
   try {
     if (!req.user) {
       return res.sendStatus(401);
     }
-    const { conversationId, messageId, receiverHasRead } = req.body;
+    const { convoId, messageId, receiverHasRead } = req.body;
     const conversation = await Conversation.findOne({ 
       where: { 
-        id: conversationId,
+        id: convoId,
       },
       include: [{ model: Message }]
     });
