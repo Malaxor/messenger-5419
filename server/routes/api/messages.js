@@ -50,13 +50,13 @@ router.patch('/', async (req, res, next) => {
       return res.sendStatus(401);
     }
     const { convoId, messageId, receiverHasRead } = req.body;
+
     const conversation = await Conversation.findOne({ 
       where: { 
         id: convoId,
       },
       include: [{ model: Message }]
     });
-
     const message = conversation.messages.find(message => message.id === messageId);
     message.update({ receiverHasRead });
     await message.save();

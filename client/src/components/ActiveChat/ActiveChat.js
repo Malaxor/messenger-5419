@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { Input, Header, Messages } from "./index";
@@ -27,13 +27,15 @@ const ActiveChat = (props) => {
   const conversation = props.conversation || {};
   const { messages, otherUser } = conversation;
 
-  if (messages) {
-    messages.forEach(message => {
-      if (message.senderId === otherUser.id && !message.receiverHasRead) {
-        updateMessage(conversation.id, message.id);
-      }
-    });
-  }
+  useEffect(() => {
+    if (messages) {
+      messages.forEach(({ id: messageId, senderId, receiverHasRead }) => {
+        if (senderId === otherUser.id && !receiverHasRead) {
+          updateMessage(conversation.id, messageId);
+        }
+      });
+    }
+  }, [updateMessage, messages, conversation, otherUser]);
 
   return (
     <Box className={classes.root}>
