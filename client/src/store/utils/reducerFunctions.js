@@ -1,3 +1,5 @@
+import latestMessageRead from '../../utils/latestMessageRead';
+
 export const addMessageToStore = (state, payload) => {
   const { message, sender } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
@@ -7,8 +9,9 @@ export const addMessageToStore = (state, payload) => {
       otherUser: sender,
       messages: [message],
       latestMessageText: message.text,
-      latestMessageTime: new Date(message.createdAt).getTime()
+      latestMessageTime: new Date(message.createdAt).getTime(),
     };
+    // newConvo.latestMessageUserRead = latestMessageRead(newConvo.messages, sender);
     return [newConvo, ...state];
   }
 
@@ -18,6 +21,7 @@ export const addMessageToStore = (state, payload) => {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
+      convoCopy.latestMessageUserRead = latestMessageRead(convoCopy.messages, convoCopy.otherUser);
       return convoCopy;
     } else {
       return convo;
@@ -77,6 +81,7 @@ export const addNewConvoToStore = (state, recipientId, message) => {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
+      convoCopy.latestMessageUserRead = latestMessageRead(convoCopy.messages, convoCopy.otherUser);
       return convoCopy;
     } else {
       return convo;

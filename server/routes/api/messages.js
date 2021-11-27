@@ -51,7 +51,7 @@ router.patch('/', async (req, res, next) => {
     }
     const { convoId, messageId, receiverHasRead } = req.body;
 
-    const conversation = await Conversation.findOne({ 
+    let conversation = await Conversation.findOne({ 
       where: { 
         id: convoId,
       },
@@ -61,7 +61,10 @@ router.patch('/', async (req, res, next) => {
     message.update({ receiverHasRead });
     await message.save();
     
-    res.sendStatus(204);
+    conversation = conversation.toJSON();
+    conversation.latestMessageRead = message.id;
+
+    res.send(conversation);
   } catch (error) {
     next(error);
   }
