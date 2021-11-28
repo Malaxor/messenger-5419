@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import './style.css';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,7 +38,7 @@ const ChatContent = (props) => {
         spanEl.current.classList.remove('preview-text--black');
       }
     }
-  }, [messages, spanEl])
+  }, [messages, spanEl]);
 
   return (
     <Box className={classes.root}>

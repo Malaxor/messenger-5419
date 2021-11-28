@@ -6,6 +6,7 @@ import store from "./store";
 
 import { theme } from "./themes/theme";
 import Routes from "./routes";
+import "./style.css";
 
 function App() {
   return (
