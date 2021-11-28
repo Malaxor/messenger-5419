@@ -38,10 +38,10 @@ const Chat = (props) => {
         sidebar={true}
       />
       <ChatContent conversation={conversation} />
-      {conversation.unreadMessages > 0 && (
-        <div className="box__unreadMessages">
+      {Boolean(conversation.unreadMessages) && 
+        <div className="box__unread-messages">
           {conversation.unreadMessages}
-        </div>)}
+        </div>}
     </Box>
   );
 };

@@ -73,7 +73,10 @@ router.get("/", async (req, res, next) => {
   
       convoJSON.latestMessageText = text;
       convoJSON.latestMessageTime = new Date(createdAt).getTime();
+      // recipient's avatar will display underneath the user's most recent message that was
+      // read by the cecipient
       convoJSON.latestMessageRead = latestMessageRead(messages, userId);
+      // the number of unread messages (unread by the user) will display inside any other user's chat
       convoJSON.unreadMessages= unreadMessages(messages, otherUser);
       conversations[i] = convoJSON;
     }
