@@ -1,7 +1,7 @@
 import latestMessageRead from '../../utils/latestMessageRead';
 
 export const addMessageToStore = (state, payload) => {
-  const { message, sender } = payload;
+  const { message, sender, userId } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
   if (sender !== null) {
     const newConvo = {
@@ -9,9 +9,10 @@ export const addMessageToStore = (state, payload) => {
       otherUser: sender,
       messages: [message],
       latestMessageText: message.text,
-      latestMessageTime: new Date(message.createdAt).getTime(),
+      latestMessageTime: new Date(message.createdAt).getTime()
     };
-    // newConvo.latestMessageUserRead = latestMessageRead(newConvo.messages, sender);
+    newConvo.latestMessageRead = latestMessageRead(newConvo.messages, userId);
+    console.log(newConvo)
     return [newConvo, ...state];
   }
 
@@ -21,7 +22,8 @@ export const addMessageToStore = (state, payload) => {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
-      convoCopy.latestMessageUserRead = latestMessageRead(convoCopy.messages, convoCopy.otherUser);
+      convoCopy.latestMessageRead = latestMessageRead(convo.messages, userId) || 'poop';
+      console.log(convoCopy)
       return convoCopy;
     } else {
       return convo;
@@ -73,7 +75,7 @@ export const addSearchedUsersToStore = (state, users) => {
   return newState;
 };
 
-export const addNewConvoToStore = (state, recipientId, message) => {
+export const addNewConvoToStore = (state, recipientId, message, userId) => {
   return state.map((convo) => {
     if (convo.otherUser.id === recipientId) {
       const convoCopy = { ...convo };
@@ -81,7 +83,8 @@ export const addNewConvoToStore = (state, recipientId, message) => {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
-      convoCopy.latestMessageUserRead = latestMessageRead(convoCopy.messages, convoCopy.otherUser);
+      convoCopy.latestMessageRead = latestMessageRead(convo.messages, userId);
+      console.log(convoCopy)
       return convoCopy;
     } else {
       return convo;

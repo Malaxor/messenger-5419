@@ -68,12 +68,12 @@ router.get("/", async (req, res, next) => {
       }
       // set properties for notification count and latest message preview
       // will use the latest message time to order the conversations chronologically (latest atop of the stack)
-      const { messages, otherUser} = convoJSON;
+      const { messages } = convoJSON;
       const { text, createdAt } = messages[messages.length - 1];
   
       convoJSON.latestMessageText = text;
       convoJSON.latestMessageTime = new Date(createdAt).getTime();
-      convoJSON.latestMessageUserRead = messages.length ? latestMessageRead(messages, otherUser) : '';
+      convoJSON.latestMessageRead = latestMessageRead(messages, userId);
       conversations[i] = convoJSON;
     }
     res.json(conversations);

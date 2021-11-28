@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Messages = (props) => {
-  const { messages, otherUser, userId } = props;
+  const { messages, otherUser, userId, latestMessageRead } = props;
   const classes = useStyles();
 
   return (
@@ -27,7 +27,8 @@ const Messages = (props) => {
             text={message.text} 
             time={time} 
             otherUser={otherUser}
-            receiverHasRead={message.receiverHasRead} 
+            messageId={message.id}
+            latestMessageRead={latestMessageRead} 
           />
         ) : (
           <OtherUserBubble 

@@ -60,11 +60,8 @@ router.patch('/', async (req, res, next) => {
     const message = conversation.messages.find(message => message.id === messageId);
     message.update({ receiverHasRead });
     await message.save();
-    
-    conversation = conversation.toJSON();
-    conversation.latestMessageRead = message.id;
-
-    res.send(conversation);
+  
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }

@@ -6,6 +6,7 @@ import {
   addMessageToStore,
   updateMessageInStore
 } from "./utils/reducerFunctions";
+import store from "./index";
 
 // ACTIONS
 
@@ -28,9 +29,11 @@ export const gotConversations = (conversations) => {
 };
 
 export const setNewMessage = (message, sender) => {
+  const { id: userId } = store.getState().user;
+  
   return {
     type: SET_MESSAGE,
-    payload: { message, sender: sender || null },
+    payload: { message, userId, sender: sender || null },
   };
 };
 export const updateMessageStatus = (convoId, messageId) => {
@@ -69,9 +72,11 @@ export const clearSearchedUsers = () => {
 
 // add new conversation when sending a new message
 export const addConversation = (recipientId, newMessage) => {
+  const { id: userId } = store.getState().user;
+  
   return {
     type: ADD_CONVERSATION,
-    payload: { recipientId, newMessage },
+    payload: { recipientId, newMessage, userId },
   };
 };
 
@@ -80,7 +85,7 @@ export const addConversation = (recipientId, newMessage) => {
 const reducer = (state = [], action) => {
   switch (action.type) {
     case GET_CONVERSATIONS:
-      return action.conversations;
+      return [...state, ...action.conversations];
     case SET_MESSAGE:
       return addMessageToStore(state, action.payload);
     case UPDATE_MESSAGE_STATUS:
@@ -99,7 +104,8 @@ const reducer = (state = [], action) => {
       return addNewConvoToStore(
         state,
         action.payload.recipientId,
-        action.payload.newMessage
+        action.payload.newMessage,
+        action.payload.userId
       );
     default:
       return state;
