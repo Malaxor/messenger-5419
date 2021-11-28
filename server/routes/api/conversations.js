@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { User, Conversation, Message } = require("../../db/models");
 const { Op } = require("sequelize");
 const onlineUsers = require("../../onlineUsers");
-const latestMessageRead = require("../../../utils/latestMessageRead");
+const { latestMessageRead, unreadMessages } = require("../../../utils");
 
 // get all conversations for a user, include latest message text for preview, and all messages
 // include other user model so we have info on username/profile pic (don't include current user info)
@@ -68,12 +68,13 @@ router.get("/", async (req, res, next) => {
       }
       // set properties for notification count and latest message preview
       // will use the latest message time to order the conversations chronologically (latest atop of the stack)
-      const { messages } = convoJSON;
+      const { messages, otherUser } = convoJSON;
       const { text, createdAt } = messages[messages.length - 1];
   
       convoJSON.latestMessageText = text;
       convoJSON.latestMessageTime = new Date(createdAt).getTime();
       convoJSON.latestMessageRead = latestMessageRead(messages, userId);
+      convoJSON.unreadMessages= unreadMessages(messages, otherUser);
       conversations[i] = convoJSON;
     }
     res.json(conversations);

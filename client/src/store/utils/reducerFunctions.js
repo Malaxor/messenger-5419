@@ -1,4 +1,4 @@
-import latestMessageRead from '../../utils/latestMessageRead';
+import { latestMessageRead, unreadMessages } from '../../utils';
 
 export const addMessageToStore = (state, payload) => {
   const { message, sender, userId } = payload;
@@ -12,7 +12,7 @@ export const addMessageToStore = (state, payload) => {
       latestMessageTime: new Date(message.createdAt).getTime()
     };
     newConvo.latestMessageRead = latestMessageRead(newConvo.messages, userId);
-    console.log(newConvo)
+    newConvo.unreadMessages = unreadMessages(newConvo.messages, userId);
     return [newConvo, ...state];
   }
 
@@ -22,8 +22,8 @@ export const addMessageToStore = (state, payload) => {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
-      convoCopy.latestMessageRead = latestMessageRead(convo.messages, userId) || 'poop';
-      console.log(convoCopy)
+      convoCopy.latestMessageRead = latestMessageRead(convoCopy.messages, userId);
+      convoCopy.unreadMessages = unreadMessages(convoCopy.messages, userId);
       return convoCopy;
     } else {
       return convo;
@@ -83,8 +83,8 @@ export const addNewConvoToStore = (state, recipientId, message, userId) => {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
-      convoCopy.latestMessageRead = latestMessageRead(convo.messages, userId);
-      console.log(convoCopy)
+      convoCopy.latestMessageRead = latestMessageRead(convoCopy.messages, userId);
+      convoCopy.unreadMessages = unreadMessages(convoCopy.messages, userId);
       return convoCopy;
     } else {
       return convo;
@@ -92,7 +92,7 @@ export const addNewConvoToStore = (state, recipientId, message, userId) => {
   });
 };
 
-export const updateMessageInStore = (state, payload) => {
+export const updateMessageInStore = (state, payload, userId) => {
   const { convoId, messageId } = payload;
 
   return state.map((convo) => {
@@ -106,6 +106,7 @@ export const updateMessageInStore = (state, payload) => {
         }
         return message;
       });
+      convoCopy.unreadMessages = unreadMessages(convoCopy.messages, userId);
       return convoCopy;
     } else {
       return convo;

@@ -37,9 +37,11 @@ export const setNewMessage = (message, sender) => {
   };
 };
 export const updateMessageStatus = (convoId, messageId) => {
+  const { id: userId } = store.getState().user;
+
   return {
     type: UPDATE_MESSAGE_STATUS,
-    payload: { convoId, messageId }
+    payload: { convoId, messageId, userId }
   };
 };
 

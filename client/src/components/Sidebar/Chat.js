@@ -4,6 +4,7 @@ import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
+import "./style.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,6 +38,10 @@ const Chat = (props) => {
         sidebar={true}
       />
       <ChatContent conversation={conversation} />
+      {conversation.unreadMessages > 0 && (
+        <div className="box__unreadMessages">
+          {conversation.unreadMessages}
+        </div>)}
     </Box>
   );
 };

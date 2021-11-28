@@ -1,0 +1,14 @@
+.box__unreadMessages {
+  margin-right: 30px;
+  height: 35px;
+  width: 35px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 50%;
+  color: white;
+  background-color:  #3A8DFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
