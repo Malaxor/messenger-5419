@@ -57,7 +57,16 @@ router.patch('/', async (req, res, next) => {
       },
       include: [{ model: Message }]
     });
-    const message = conversation.messages.find(message => message.id === messageId);
+    const { messages } = conversation;
+    let message;
+
+    for (let i = 0; i < messages.length; i++) {
+      if (messages[i].id === messageId) {
+        message = messages[i];
+        break;
+      }
+    }
+
     message.update({ receiverHasRead });
     await message.save();
   

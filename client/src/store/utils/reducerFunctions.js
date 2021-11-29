@@ -1,4 +1,4 @@
-import { latestMessageRead, unreadMessages } from '../../utils';
+import { lastRecipientRead, unreadMessages } from '../../utils';
 
 export const addMessageToStore = (state, payload) => {
   const { message, sender, userId } = payload;
@@ -11,7 +11,7 @@ export const addMessageToStore = (state, payload) => {
       latestMessageText: message.text,
       latestMessageTime: new Date(message.createdAt).getTime()
     };
-    newConvo.latestMessageRead = latestMessageRead(newConvo.messages, userId);
+    newConvo.lastRecipientRead = lastRecipientRead(newConvo.messages, userId);
     newConvo.unreadMessages = unreadMessages(newConvo.messages, userId);
     return [newConvo, ...state];
   }
@@ -22,7 +22,7 @@ export const addMessageToStore = (state, payload) => {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
-      convoCopy.latestMessageRead = latestMessageRead(convoCopy.messages, userId);
+      convoCopy.lastRecipientRead = lastRecipientRead(convoCopy.messages, userId);
       convoCopy.unreadMessages = unreadMessages(convoCopy.messages, userId);
       return convoCopy;
     } else {
@@ -83,7 +83,7 @@ export const addNewConvoToStore = (state, recipientId, message, userId) => {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
-      convoCopy.latestMessageRead = latestMessageRead(convoCopy.messages, userId);
+      convoCopy.lastRecipientRead = lastRecipientRead(convoCopy.messages, userId);
       convoCopy.unreadMessages = unreadMessages(convoCopy.messages, userId);
       return convoCopy;
     } else {

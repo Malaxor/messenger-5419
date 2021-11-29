@@ -1,4 +1,4 @@
 module.exports = { 
-  latestMessageRead: require('./latestMessageRead'),
+  lastRecipientRead: require('./lastRecipientRead'),
   unreadMessages: require('./unreadMessages')
 }

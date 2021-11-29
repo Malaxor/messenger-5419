@@ -1,4 +1,4 @@
-export const latestMessageRead = (messages, userId) => {
+export const lastRecipientRead = (messages, userId) => {
   const readMessages = [];
 
   for (let i = 0; i < messages.length; i++) {

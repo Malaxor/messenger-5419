@@ -1,2 +1,2 @@
-export { latestMessageRead } from './latestMessageRead';
+export { lastRecipientRead } from './lastRecipientRead';
 export { unreadMessages } from './unreadMessages';
