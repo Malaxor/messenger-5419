@@ -79,7 +79,7 @@ export const addConversation = (recipientId, message, lastRead, unread) => {
 const reducer = (state = [], action) => {
   switch (action.type) {
     case GET_CONVERSATIONS:
-      return [...state, ...action.conversations];
+      return action.conversations;
     case SET_MESSAGE:
       return addMessageToStore(state, action.payload);
     case UPDATE_MESSAGE_STATUS:
