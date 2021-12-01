@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { Input, Header, Messages } from "./index";
 import { connect } from "react-redux";
-import { updateMessage } from "../../store/utils/thunkCreators";
+import { updateMessages } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -23,19 +23,24 @@ const useStyles = makeStyles(() => ({
 
 const ActiveChat = (props) => {
   const classes = useStyles();
-  const { user, updateMessage } = props;
+  const { user, updateMessages } = props;
   const conversation = props.conversation || {};
   const { messages, otherUser } = conversation;
 
   useEffect(() => {
     if (messages) {
-      messages.forEach(({ id: messageId, senderId, receiverHasRead }) => {
+      const messagesIds = [];
+
+      for (let i = 0; i < messages.length; i++) {
+        const { id, senderId, receiverHasRead } = messages[i];
+
         if (senderId === otherUser.id && !receiverHasRead) {
-          updateMessage(conversation.id, messageId);
+          messagesIds.push(id);
         }
-      });
+      }
+      messagesIds.length && updateMessages(conversation.id, messagesIds, otherUser.id);
     }
-  }, [updateMessage, messages, conversation, otherUser]);
+  }, [updateMessages, messages, conversation, otherUser]);
 
   return (
     <Box className={classes.root}>
@@ -75,4 +80,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { updateMessage })(ActiveChat);
+export default connect(mapStateToProps, { updateMessages })(ActiveChat);

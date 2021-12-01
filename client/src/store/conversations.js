@@ -4,12 +4,10 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
-  updateMessageInStore
+  updateMessagesInStore
 } from "./utils/reducerFunctions";
-import store from "./index";
 
 // ACTIONS
-
 const GET_CONVERSATIONS = "GET_CONVERSATIONS";
 const SET_MESSAGE = "SET_MESSAGE";
 const ADD_ONLINE_USER = "ADD_ONLINE_USER";
@@ -28,20 +26,16 @@ export const gotConversations = (conversations) => {
   };
 };
 
-export const setNewMessage = (message, sender) => {
-  const { id: userId } = store.getState().user;
-  
+export const setNewMessage = (message, lastRead, unread, sender) => {
   return {
     type: SET_MESSAGE,
-    payload: { message, userId, sender: sender || null },
+    payload: { message, lastRead, unread, sender: sender || null },
   };
 };
-export const updateMessageStatus = (convoId, messageId) => {
-  const { id: userId } = store.getState().user;
-
+export const updateMessageStatus = (data, convoID, messagesIDs) => {
   return {
     type: UPDATE_MESSAGE_STATUS,
-    payload: { convoId, messageId, userId }
+    payload: { data, convoID, messagesIDs }
   };
 };
 
@@ -73,12 +67,10 @@ export const clearSearchedUsers = () => {
 };
 
 // add new conversation when sending a new message
-export const addConversation = (recipientId, newMessage) => {
-  const { id: userId } = store.getState().user;
-  
+export const addConversation = (recipientId, message, lastRead, unread) => {
   return {
     type: ADD_CONVERSATION,
-    payload: { recipientId, newMessage, userId },
+    payload: { recipientId, message, lastRead, unread }
   };
 };
 
@@ -91,7 +83,7 @@ const reducer = (state = [], action) => {
     case SET_MESSAGE:
       return addMessageToStore(state, action.payload);
     case UPDATE_MESSAGE_STATUS:
-      return updateMessageInStore(state, action.payload);
+      return updateMessagesInStore(state, action.payload);
     case ADD_ONLINE_USER: {
       return addOnlineUserToStore(state, action.id);
     }
@@ -105,9 +97,7 @@ const reducer = (state = [], action) => {
     case ADD_CONVERSATION:
       return addNewConvoToStore(
         state,
-        action.payload.recipientId,
-        action.payload.newMessage,
-        action.payload.userId
+        action.payload
       );
     default:
       return state;

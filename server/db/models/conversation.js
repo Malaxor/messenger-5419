@@ -5,7 +5,6 @@ const Message = require("./message");
 const Conversation = db.define("conversation", {});
 
 // find conversation given two user Ids
-
 Conversation.findConversation = async function (user1Id, user2Id) {
   const conversation = await Conversation.findOne({
     where: {

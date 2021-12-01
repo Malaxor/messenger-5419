@@ -1,17 +1,1 @@
-.box__unread-messages {
-  margin-right: 30px;
-  height: 35px;
-  width: 35px;
-  font-size: 14px;
-  font-weight: bold;
-  border-radius: 50%;
-  color: white;
-  background-color:  #3A8DFF;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.preview-text--black {
-  color: black;
-  font-weight: 700;
-}
+

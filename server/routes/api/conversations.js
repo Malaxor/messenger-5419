@@ -2,7 +2,6 @@ const router = require("express").Router();
 const { User, Conversation, Message } = require("../../db/models");
 const { Op } = require("sequelize");
 const onlineUsers = require("../../onlineUsers");
-const { lastRecipientRead, unreadMessages } = require("../../../utils");
 
 // get all conversations for a user, include latest message text for preview, and all messages
 // include other user model so we have info on username/profile pic (don't include current user info)
@@ -74,9 +73,36 @@ router.get("/", async (req, res, next) => {
       convoJSON.latestMessageTime = new Date(createdAt).getTime();
       // recipient's avatar will display underneath the user's most recent message that was
       // read by the cecipient (getting the id of that message)
+      function lastRecipientRead(messages, userId) {
+        const readMessages = [];
+
+        for (let i = 0; i < messages.length; i++) {
+          const message = messages[i];
+          const { senderId, receiverHasRead } = message;
+      
+          if (senderId === userId && receiverHasRead) {
+            readMessages.push(message);
+          }
+        }
+        return readMessages.length ? readMessages[readMessages.length - 1].id : null;
+      }
       convoJSON.lastRecipientRead = lastRecipientRead(messages, userId);
+      
+      function unreadMessages(messages, otherUserId) {
+        const unreadMessages = [];
+      
+        for (let i = 0; i < messages.length; i++) {
+          const message = messages[i];
+          const { senderId, receiverHasRead } = message;
+      
+          if (senderId === otherUserId && !receiverHasRead) {
+            unreadMessages.push(message);
+          }
+        }
+        return unreadMessages.length;
+      }
       // the number of unread messages sent by the other user will display in the chat component
-      convoJSON.unreadMessages= unreadMessages(messages, otherUser);
+      convoJSON.unreadMessages = unreadMessages(messages, otherUser.id);
       conversations[i] = convoJSON;
     }
     res.json(conversations);

@@ -112,8 +112,6 @@ async function seed() {
         "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914466/messenger/9e2972c07afac45a8b03f5be3d0a796abe2e566e_ttq23y.png",
     }),
   ]);
-
-  console.log(`seeded users and messages`);
 }
 
 async function runSeed() {

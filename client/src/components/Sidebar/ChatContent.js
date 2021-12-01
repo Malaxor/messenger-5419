@@ -17,12 +17,16 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 12,
     color: "#9CADC8",
     letterSpacing: -0.17,
+  },
+  black: {
+    color: 'black',
+    fontWeight: 700,
   }
 }));
 
 const ChatContent = (props) => {
   const classes = useStyles();
-  const spanEl = useRef();
+  const typeographyEl = useRef();
 
   const { conversation } = props;
   const { latestMessageText, otherUser, messages } = conversation;
@@ -33,12 +37,12 @@ const ChatContent = (props) => {
       const { senderId, receiverHasRead } = lastMessage;
   
       if (senderId === otherUser.id && !receiverHasRead) {
-        spanEl.current.classList.add('preview-text--black');
+        typeographyEl.current.classList.add(classes.black);
       } else {
-        spanEl.current.classList.remove('preview-text--black');
+        typeographyEl.current.classList.remove(classes.black);
       }
     }
-  }, [messages, spanEl]);
+  }, [messages, typeographyEl, otherUser, classes]);
 
   return (
     <Box className={classes.root}>
@@ -46,8 +50,8 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
-          <span ref={spanEl} className="">{latestMessageText}</span>
+        <Typography ref={typeographyEl} className={classes.previewText}>
+          {latestMessageText}
         </Typography>
       </Box>
     </Box>

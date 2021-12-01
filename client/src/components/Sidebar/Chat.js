@@ -4,6 +4,7 @@ import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
+import BadgeUnread from './BadgeUnread';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,18 +23,16 @@ const useStyles = makeStyles((theme) => ({
 const Chat = (props) => {
   const classes = useStyles();
   const { conversation } = props;
-  const { otherUser } = conversation;
+  let { otherUser, unreadMessages } = conversation;
   // used to immediately remove the unread messages div when seting active chat
-  const [unreadMessages, setUnreadMessages] = useState(conversation.unreadMessages);
+  // const [unreadMessages, setUnreadMessages] = useState(conversation.unreadMessages);
 
   const handleClick = async (conversation) => {
     await props.setActiveChat(conversation.otherUser.username);
   };
-
   return (
     <Box 
       onClick={() => {
-        setUnreadMessages(0);
         handleClick(conversation)
       }} 
       className={classes.root}
@@ -45,10 +44,7 @@ const Chat = (props) => {
         sidebar={true}
       />
       <ChatContent conversation={conversation} />
-      {Boolean(unreadMessages) && 
-        <div className="box__unread-messages">
-          {unreadMessages}
-        </div>}
+      {Boolean(unreadMessages) && <BadgeUnread unreadMessages={unreadMessages} />}
     </Box>
   );
 };
