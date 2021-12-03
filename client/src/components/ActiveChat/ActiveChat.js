@@ -28,7 +28,7 @@ const ActiveChat = (props) => {
   const { messages, otherUser } = conversation;
 
   useEffect(() => {
-    if (messages) {
+    if (messages?.length) {
       const messagesIds = messages.reduce((arr, message) => {
         const { id, senderId, receiverHasRead } = message;
         if (senderId === otherUser.id && !receiverHasRead) arr.push(id);
@@ -38,7 +38,7 @@ const ActiveChat = (props) => {
         updateMessages(conversation.id, messagesIds);
       }
     }
-  }, [updateMessages, messages, conversation, otherUser]);
+  }, [updateMessages, messages?.length, conversation, otherUser]);
 
   return (
     <Box className={classes.root}>

@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { Op } = require("sequelize");
 const { Conversation, Message } = require("../../db/models");
 const onlineUsers = require("../../onlineUsers");
 
@@ -18,9 +19,20 @@ router.post("/", async (req, res, next) => {
       const messages = await Message.findAll({
         where: { conversationId }
       });
+      // MAY NOT NEED THIS CODE BECAUSE THE useEffect HOOK IN ACTIVE CHAT ALWAYS RUNS
+      // WHEN THE MESSAGE ARRAY LENGTH CHANGES 
       const lastReadByOther = Conversation.readMessages(messages, senderId);
       const lastReadByUser = Conversation.readMessages(messages, recipientId);
-      const unread = Conversation.unreadMessages(messages, recipientId);
+      // const unread = Conversation.unreadMessages(messages, recipientId);
+      const unread = await Message.count({ 
+        where: { 
+          conversationId,
+          receiverHasRead: false,
+          [Op.not]: { 
+            senderId
+          }
+        }
+      });
       return res.json({ message, sender, lastReadByUser, lastReadByOther, unread });
     }
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist

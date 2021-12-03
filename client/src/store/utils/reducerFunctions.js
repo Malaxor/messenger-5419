@@ -7,7 +7,6 @@ const {
     lastReadByUser, 
     unread 
   }} = payload;
-  console.log(payload)
 
   // if sender isn't null, that means the message needs to be put in a brand new convo
   if (sender !== null) {
@@ -27,10 +26,9 @@ const {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
-      convoCopy.latestMessageText = message.text;
       convoCopy.lastReadByOther = lastReadByOther
       convoCopy.lastReadByUser = lastReadByUser;
-      convoCopy.unreaMessages = unread;
+      convoCopy.unreadMessages = unread;
       return convoCopy;
     } else {
       return convo;
