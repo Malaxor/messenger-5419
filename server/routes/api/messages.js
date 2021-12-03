@@ -2,32 +2,6 @@ const router = require("express").Router();
 const { Conversation, Message } = require("../../db/models");
 const onlineUsers = require("../../onlineUsers");
 
-function lastRecipientRead(messages, userId) {
-  const readMessages = [];
-
-  for (let i = 0; i < messages.length; i++) {
-    const message = messages[i];
-    const { senderId, receiverHasRead } = message;
-
-    if (senderId === userId && receiverHasRead) {
-      readMessages.push(message);
-    }
-  }
-  return readMessages.length ? readMessages[readMessages.length - 1].id : null;
-}
-function unreadMessages(messages, otherUserId) {
-  const unreadMessages = [];
-
-  for (let i = 0; i < messages.length; i++) {
-    const message = messages[i];
-    const { senderId, receiverHasRead } = message;
-
-    if (senderId === otherUserId && !receiverHasRead) {
-      unreadMessages.push(message);
-    }
-  }
-  return unreadMessages.length;
-}
 
 // expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
 router.post("/", async (req, res, next) => {
@@ -41,7 +15,13 @@ router.post("/", async (req, res, next) => {
     // if we already know conversation id, we can save time and just add it to message and return
     if (conversationId) {
       const message = await Message.create({ senderId, text, conversationId });
-      return res.json({ message, sender });
+      const messages = await Message.findAll({
+        where: { conversationId }
+      });
+      const lastReadByOther = Conversation.readMessages(messages, senderId);
+      const lastReadByUser = Conversation.readMessages(messages, recipientId);
+      const unread = Conversation.unreadMessages(messages, recipientId);
+      return res.json({ message, sender, lastReadByUser, lastReadByOther, unread });
     }
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist
     let conversation = await Conversation.findConversation(
@@ -65,15 +45,7 @@ router.post("/", async (req, res, next) => {
       conversationId: conversation.id,
     });
 
-    const messages = await Message.findAll({
-      where: { 
-        conversationId: conversation.id
-      }
-    });
-    const lastRead = lastRecipientRead(messages, senderId);
-    const unread = unreadMessages(messages, recipientId);
-
-    res.json({ message, sender, lastRead, unread });
+    res.json({ message, sender });
   } catch (error) {
     next(error);
   }
@@ -86,7 +58,7 @@ router.patch('/', async (req, res, next) => {
       return res.sendStatus(401);
     }
     const userId = req.user.id;
-    const { convoId, messagesIds, otherUserId } = req.body;
+    const { convoId, messagesIds } = req.body;
 
     await Message.update({ receiverHasRead: true }, {
       where: {
@@ -94,17 +66,26 @@ router.patch('/', async (req, res, next) => {
         id: messagesIds
       }
     });
-    const messages = await Message.findAll({
-      where: { 
-        conversationId: convoId
-      }
-    });
-    const lastRead = lastRecipientRead(messages, userId);
-    const unread = unreadMessages(messages, otherUserId);
 
-    res.json({ lastRead, unread, messagesIds });
+    let lastReadByOther = await Message.findAll({
+      where: {
+        senderId: userId,
+        conversationId: convoId, 
+        receiverHasRead: true
+      },
+      attributes: ['id']
+    });
+    if (lastReadByOther.length) {
+      lastReadByOther = lastReadByOther[lastReadByOther.length - 1].id;
+    }
+
+    const lastReadByUser = messagesIds[messagesIds.length - 1];
+    const unread = 0;
+    
+    res.json({ lastReadByUser, lastReadByOther, unread, messagesIds });
   } catch (error) {
     next(error);
   }
 });
+
 module.exports = router;

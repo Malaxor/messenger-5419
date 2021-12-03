@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,23 +27,11 @@ const useStyles = makeStyles((theme) => ({
 
 const ChatContent = (props) => {
   const classes = useStyles();
-  const typeographyEl = useRef();
-
   const { conversation } = props;
   const { latestMessageText, otherUser, messages } = conversation;
 
-  useEffect(() => {
-    if (messages.length) {
-      const lastMessage = messages[messages.length - 1];
-      const { senderId, receiverHasRead } = lastMessage;
-  
-      if (senderId === otherUser.id && !receiverHasRead) {
-        typeographyEl.current.classList.add(classes.black);
-      } else {
-        typeographyEl.current.classList.remove(classes.black);
-      }
-    }
-  }, [messages, typeographyEl, otherUser, classes]);
+  const lastMessage = messages?.length && messages[messages.length - 1];
+  const { senderId, receiverHasRead } = lastMessage;
 
   return (
     <Box className={classes.root}>
@@ -50,7 +39,9 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography ref={typeographyEl} className={classes.previewText}>
+        <Typography 
+        className={
+          clsx(classes.previewText, {[classes.black]: senderId === otherUser.id && !receiverHasRead})}>
           {latestMessageText}
         </Typography>
       </Box>

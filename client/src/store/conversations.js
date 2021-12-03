@@ -26,16 +26,16 @@ export const gotConversations = (conversations) => {
   };
 };
 
-export const setNewMessage = (message, lastRead, unread, sender) => {
+export const setNewMessage = (data, sender) => {
   return {
     type: SET_MESSAGE,
-    payload: { message, lastRead, unread, sender: sender || null },
+    payload: { data, sender: sender || null }
   };
 };
-export const updateMessageStatus = (data, convoID, messagesIDs) => {
+export const updateMessageStatus = (data, convoId, messagesIds) => {
   return {
     type: UPDATE_MESSAGE_STATUS,
-    payload: { data, convoID, messagesIDs }
+    payload: { data, convoId, messagesIds }
   };
 };
 
@@ -67,10 +67,10 @@ export const clearSearchedUsers = () => {
 };
 
 // add new conversation when sending a new message
-export const addConversation = (recipientId, message, lastRead, unread) => {
+export const addConversation = (recipientId, message) => {
   return {
     type: ADD_CONVERSATION,
-    payload: { recipientId, message, lastRead, unread }
+    payload: { recipientId, message }
   };
 };
 

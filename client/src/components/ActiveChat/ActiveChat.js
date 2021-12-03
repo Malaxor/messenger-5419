@@ -29,16 +29,14 @@ const ActiveChat = (props) => {
 
   useEffect(() => {
     if (messages) {
-      const messagesIds = [];
-
-      for (let i = 0; i < messages.length; i++) {
-        const { id, senderId, receiverHasRead } = messages[i];
-
-        if (senderId === otherUser.id && !receiverHasRead) {
-          messagesIds.push(id);
-        }
+      const messagesIds = messages.reduce((arr, message) => {
+        const { id, senderId, receiverHasRead } = message;
+        if (senderId === otherUser.id && !receiverHasRead) arr.push(id);
+        return arr;
+      }, []);
+      if (messagesIds.length) {
+        updateMessages(conversation.id, messagesIds);
       }
-      messagesIds.length && updateMessages(conversation.id, messagesIds, otherUser.id);
     }
   }, [updateMessages, messages, conversation, otherUser]);
 
@@ -54,7 +52,7 @@ const ActiveChat = (props) => {
             <Messages
               messages={conversation.messages}
               otherUser={conversation.otherUser}
-              lastRecipientRead={conversation.lastRecipientRead}
+              lastReadByOther={conversation.lastReadByOther}
               userId={user.id}
             />
             <Input

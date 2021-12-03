@@ -71,38 +71,12 @@ router.get("/", async (req, res, next) => {
       const { text, createdAt } = messages[messages.length - 1];
       convoJSON.latestMessageText = text;
       convoJSON.latestMessageTime = new Date(createdAt).getTime();
-      // recipient's avatar will display underneath the user's most recent message that was
-      // read by the cecipient (getting the id of that message)
-      function lastRecipientRead(messages, userId) {
-        const readMessages = [];
-
-        for (let i = 0; i < messages.length; i++) {
-          const message = messages[i];
-          const { senderId, receiverHasRead } = message;
-      
-          if (senderId === userId && receiverHasRead) {
-            readMessages.push(message);
-          }
-        }
-        return readMessages.length ? readMessages[readMessages.length - 1].id : null;
-      }
-      convoJSON.lastRecipientRead = lastRecipientRead(messages, userId);
-      
-      function unreadMessages(messages, otherUserId) {
-        const unreadMessages = [];
-      
-        for (let i = 0; i < messages.length; i++) {
-          const message = messages[i];
-          const { senderId, receiverHasRead } = message;
-      
-          if (senderId === otherUserId && !receiverHasRead) {
-            unreadMessages.push(message);
-          }
-        }
-        return unreadMessages.length;
-      }
+      // extracting the last message read by the otherUser to display his/her avatar below it
+      convoJSON.lastReadByOther = Conversation.readMessages(messages, userId);
+      // extracting the last message read by the user
+      convoJSON.lastReadByUser = Conversation.readMessages(messages, otherUser.id);
       // the number of unread messages sent by the other user will display in the chat component
-      convoJSON.unreadMessages = unreadMessages(messages, otherUser.id);
+      convoJSON.unreadMessages = Conversation.unreadMessages(messages, otherUser.id);
       conversations[i] = convoJSON;
     }
     res.json(conversations);

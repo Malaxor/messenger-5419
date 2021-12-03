@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
@@ -24,8 +24,6 @@ const Chat = (props) => {
   const classes = useStyles();
   const { conversation } = props;
   let { otherUser, unreadMessages } = conversation;
-  // used to immediately remove the unread messages div when seting active chat
-  // const [unreadMessages, setUnreadMessages] = useState(conversation.unreadMessages);
 
   const handleClick = async (conversation) => {
     await props.setActiveChat(conversation.otherUser.username);

@@ -92,17 +92,24 @@ const sendMessage = (data, body) => {
   });
 };
 
+// const updateMessage = (data, body) => {
+//   socket.emit("update-message", {
+//     message: data.message,
+//     recipientId: body.recipientId,
+//     sender: data.sender,
+//   });
+// };
+
 // message format to send: {recipientId, text, conversationId}
 // conversationId will be set to null if its a brand new conversation
 export const postMessage = (body) => async (dispatch) => {
   try {
     const data = await saveMessage(body);
-    const { message, lastRead, unread } = data;
 
     if (!body.conversationId) {
-      dispatch(addConversation(body.recipientId, message, lastRead, unread));
+      dispatch(addConversation(body.recipientId, data.message));
     } else {
-      dispatch(setNewMessage(message, lastRead, unread));
+      dispatch(setNewMessage(data));
     }
 
     sendMessage(data, body);
@@ -111,9 +118,9 @@ export const postMessage = (body) => async (dispatch) => {
   }
 };
 
-export const updateMessages = (convoId, messagesIds, otherUserId) => async (dispatch) => {
+export const updateMessages = (convoId, messagesIds) => async (dispatch) => {
   try {
-    const { data } = await axios.patch('/api/messages', { convoId, messagesIds, otherUserId });
+    const { data } = await axios.patch('/api/messages', { convoId, messagesIds });
     dispatch(updateMessageStatus(data, convoId, messagesIds));
   } catch (error) {
     console.error(error);
