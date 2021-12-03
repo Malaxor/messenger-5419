@@ -20,19 +20,11 @@ router.post("/", async (req, res, next) => {
         where: { conversationId }
       });
       // MAY NOT NEED THIS CODE BECAUSE THE useEffect HOOK IN ACTIVE CHAT ALWAYS RUNS
-      // WHEN THE MESSAGE ARRAY LENGTH CHANGES 
+      // WHEN THE MESSAGE ARRAY LENGTH CHANGES, NOTIFYING US OF THE lastReadByOther, lastReadByUser VALUES
       const lastReadByOther = Conversation.readMessages(messages, senderId);
       const lastReadByUser = Conversation.readMessages(messages, recipientId);
-      // const unread = Conversation.unreadMessages(messages, recipientId);
-      const unread = await Message.count({ 
-        where: { 
-          conversationId,
-          receiverHasRead: false,
-          [Op.not]: { 
-            senderId
-          }
-        }
-      });
+      const unread = Conversation.unreadMessages(messages, recipientId);
+
       return res.json({ message, sender, lastReadByUser, lastReadByOther, unread });
     }
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist

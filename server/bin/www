@@ -47,12 +47,12 @@ io.on("connection", (socket) => {
     });
   });
 
-  // socket.on("update-message", (data) => {
-  //   socket.broadcast.emit("update-message", {
-  //     message: data.message,
-  //     sender: data.sender
-  //   });
-  // });
+  socket.on("update-message", (lastReadByUser, user) => {
+    socket.broadcast.emit("update-message", {
+      lastReadByOther: lastReadByUser,
+      sender: user
+    });
+  });
 
   socket.on("logout", (id) => {
     if (onlineUsers.includes(id)) {

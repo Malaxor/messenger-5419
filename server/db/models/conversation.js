@@ -23,7 +23,7 @@ Conversation.findConversation = async function (user1Id, user2Id) {
 // using this static function in two scenarios: 
 // 1) return the latest message read by user
 // 2) return latest message read by the other user
-Conversation.readMessages = function(messages, personId) {
+Conversation.readMessages = function (messages, personId) {
   const readMessages = messages.reduce((arr, message) => {
     const { senderId, receiverHasRead } = message;
     if (senderId === personId && receiverHasRead) {
@@ -34,7 +34,7 @@ Conversation.readMessages = function(messages, personId) {
   return readMessages.length ? readMessages[readMessages.length - 1].id : null;
 }
 // the user will know the number of unread messages sent by the other user
-Conversation.unreadMessages = function(messages, personId) {
+Conversation.unreadMessages = function (messages, personId) {
   const readMessages = messages.reduce((arr, message) => {
     const { senderId, receiverHasRead } = message;
     if (senderId === personId && !receiverHasRead) {

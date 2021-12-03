@@ -1,11 +1,11 @@
 export const addMessageToStore = (state, payload) => {
-const { 
-  data: { 
-    sender, 
-    message, 
-    lastReadByOther, 
-    lastReadByUser, 
-    unread 
+  const { 
+    data: { 
+      sender, 
+      message, 
+      lastReadByOther, 
+      lastReadByUser, 
+      unread 
   }} = payload;
 
   // if sender isn't null, that means the message needs to be put in a brand new convo
@@ -26,7 +26,7 @@ const {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
-      convoCopy.lastReadByOther = lastReadByOther
+      convoCopy.lastReadByOther = lastReadByOther;
       convoCopy.lastReadByUser = lastReadByUser;
       convoCopy.unreadMessages = unread;
       return convoCopy;

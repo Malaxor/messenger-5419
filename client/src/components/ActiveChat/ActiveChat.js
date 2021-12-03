@@ -35,7 +35,7 @@ const ActiveChat = (props) => {
         return arr;
       }, []);
       if (messagesIds.length) {
-        updateMessages(conversation.id, messagesIds);
+        updateMessages(conversation.id, messagesIds, otherUser);
       }
     }
   }, [updateMessages, messages?.length, conversation, otherUser]);
