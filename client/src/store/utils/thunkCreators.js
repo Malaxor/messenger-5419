@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  updateMessageStatus
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -91,6 +92,14 @@ const sendMessage = (data, body) => {
   });
 };
 
+const updateMessage = (lastReadByUser, otherUser, user) => {
+  socket.emit("update-message", {
+    lastReadByOther: lastReadByUser,
+    recipientId: otherUser.id,
+    sender: user
+  });
+};
+
 // message format to send: {recipientId, text, conversationId}
 // conversationId will be set to null if its a brand new conversation
 export const postMessage = (body) => async (dispatch) => {
@@ -100,14 +109,25 @@ export const postMessage = (body) => async (dispatch) => {
     if (!body.conversationId) {
       dispatch(addConversation(body.recipientId, data.message));
     } else {
-      dispatch(setNewMessage(data.message));
+      dispatch(setNewMessage(data));
     }
-
+    
     sendMessage(data, body);
   } catch (error) {
     console.error(error);
   }
 };
+
+export const updateMessages = (convoId, messagesIds, otherUser, user) => async (dispatch) => {
+  try {
+    const { data } = await axios.patch('/api/messages', { convoId, messagesIds });
+    dispatch(updateMessageStatus(data, convoId, messagesIds));
+
+    updateMessage(data.lastReadByUser, otherUser, user);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 export const searchUsers = (searchTerm) => async (dispatch) => {
   try {

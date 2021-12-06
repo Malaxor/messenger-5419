@@ -67,10 +67,16 @@ router.get("/", async (req, res, next) => {
       }
       // set properties for notification count and latest message preview
       // will use the latest message time to order the conversations chronologically (latest atop of the stack)
-      const { messages } = convoJSON;
+      const { messages, otherUser } = convoJSON;
       const { text, createdAt } = messages[messages.length - 1];
       convoJSON.latestMessageText = text;
       convoJSON.latestMessageTime = new Date(createdAt).getTime();
+      // extracting the last message read by the otherUser to display his/her avatar below it
+      convoJSON.lastReadByOther = Conversation.readMessages(messages, userId);
+      // extracting the last message read by the user
+      convoJSON.lastReadByUser = Conversation.readMessages(messages, otherUser.id);
+      // the number of unread messages sent by the other user will display in the chat component
+      convoJSON.unreadMessages = Conversation.unreadMessages(messages, otherUser.id);
       conversations[i] = convoJSON;
     }
     res.json(conversations);

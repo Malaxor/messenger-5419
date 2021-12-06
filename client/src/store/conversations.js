@@ -4,10 +4,10 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
+  updateMessagesInStore
 } from "./utils/reducerFunctions";
 
 // ACTIONS
-
 const GET_CONVERSATIONS = "GET_CONVERSATIONS";
 const SET_MESSAGE = "SET_MESSAGE";
 const ADD_ONLINE_USER = "ADD_ONLINE_USER";
@@ -15,6 +15,7 @@ const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
+const UPDATE_MESSAGE_STATUS = "UPDATE_MESSAGE_STATUS";
 
 // ACTION CREATORS
 
@@ -25,10 +26,16 @@ export const gotConversations = (conversations) => {
   };
 };
 
-export const setNewMessage = (message, sender) => {
+export const setNewMessage = (data, sender) => {
   return {
     type: SET_MESSAGE,
-    payload: { message, sender: sender || null },
+    payload: { data, sender: sender || null }
+  };
+};
+export const updateMessageStatus = (data, convoId, messagesIds) => {
+  return {
+    type: UPDATE_MESSAGE_STATUS,
+    payload: { data, convoId, messagesIds }
   };
 };
 
@@ -60,10 +67,10 @@ export const clearSearchedUsers = () => {
 };
 
 // add new conversation when sending a new message
-export const addConversation = (recipientId, newMessage) => {
+export const addConversation = (recipientId, message) => {
   return {
     type: ADD_CONVERSATION,
-    payload: { recipientId, newMessage },
+    payload: { recipientId, message }
   };
 };
 
@@ -75,6 +82,8 @@ const reducer = (state = [], action) => {
       return action.conversations;
     case SET_MESSAGE:
       return addMessageToStore(state, action.payload);
+    case UPDATE_MESSAGE_STATUS:
+      return updateMessagesInStore(state, action.payload);
     case ADD_ONLINE_USER: {
       return addOnlineUserToStore(state, action.id);
     }
@@ -88,8 +97,7 @@ const reducer = (state = [], action) => {
     case ADD_CONVERSATION:
       return addNewConvoToStore(
         state,
-        action.payload.recipientId,
-        action.payload.newMessage
+        action.payload
       );
     default:
       return state;

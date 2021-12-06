@@ -1,5 +1,13 @@
 export const addMessageToStore = (state, payload) => {
-  const { message, sender } = payload;
+  const { 
+    data: { 
+      sender, 
+      message, 
+      lastReadByOther, 
+      lastReadByUser, 
+      unread 
+  }} = payload;
+
   // if sender isn't null, that means the message needs to be put in a brand new convo
   if (sender !== null) {
     const newConvo = {
@@ -18,6 +26,9 @@ export const addMessageToStore = (state, payload) => {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
+      convoCopy.lastReadByOther = lastReadByOther;
+      convoCopy.lastReadByUser = lastReadByUser;
+      convoCopy.unreadMessages = unread;
       return convoCopy;
     } else {
       return convo;
@@ -69,7 +80,9 @@ export const addSearchedUsersToStore = (state, users) => {
   return newState;
 };
 
-export const addNewConvoToStore = (state, recipientId, message) => {
+export const addNewConvoToStore = (state, payload) => {
+  const { recipientId, message } = payload;
+  
   return state.map((convo) => {
     if (convo.otherUser.id === recipientId) {
       const convoCopy = { ...convo };
@@ -77,6 +90,31 @@ export const addNewConvoToStore = (state, recipientId, message) => {
       convoCopy.messages = [...convo.messages, message];
       convoCopy.latestMessageText = message.text;
       convoCopy.latestMessageTime = new Date(message.createdAt).getTime();
+      return convoCopy;
+    } else {
+      return convo;
+    }
+  });
+};
+
+export const updateMessagesInStore = (state, payload) => {
+  const { convoId, messagesIds, data } = payload;
+  const { lastReadByUser, lastReadByOther, unread } = data;
+
+  return state.map((convo) => {
+    if (convo.id === convoId) {
+      const convoCopy = { ...convo };
+      convoCopy.messages = convoCopy.messages.map(message => {
+        if (messagesIds.includes(message.id)) {
+          const messageCopy = { ...message };
+          messageCopy.receiverHasRead = true;
+          return messageCopy;
+        }
+        return message;
+      });
+      convoCopy.lastReadByOther = lastReadByOther;
+      convoCopy.lastReadByUser = lastReadByUser;
+      convoCopy.unreadMessages = unread;
       return convoCopy;
     } else {
       return convo;
